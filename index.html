@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AMICO Lab — homepage mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --indigo:#14204A;      /* hero / footer */
+    --indigo-deep:#0F1838; /* hero gradient end */
+    --paper:#F6F6F2;       /* page background */
+    --ink:#232A40;         /* body text */
+    --ink-soft:#5A6178;    /* secondary text */
+    --amber:#E8930C;       /* activation accent */
+    --amber-soft:#F5B94F;
+    --edge:#6E8BD1;        /* connectome edge blue */
+    --line:#DDDCD4;        /* hairlines on paper */
+    --radius:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    background:var(--paper);color:var(--ink);
+    font-size:17px;line-height:1.65;
+  }
+  h1,h2,h3{font-family:'Bricolage Grotesque',sans-serif;line-height:1.12;font-weight:700}
+  a{color:inherit}
+  img{display:block;max-width:100%}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  :focus-visible{outline:3px solid var(--amber);outline-offset:3px;border-radius:4px}
+
+  /* ---------- header + hero ---------- */
+  .hero{
+    position:relative;overflow:hidden;color:#F3F4F8;
+    background:linear-gradient(160deg,var(--indigo) 0%,var(--indigo-deep) 78%);
+  }
+  .hero svg.net{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .net .drift-a{animation:driftA 46s ease-in-out infinite alternate}
+  .net .drift-b{animation:driftB 58s ease-in-out infinite alternate}
+  @keyframes driftA{from{transform:translate(0,0)}to{transform:translate(26px,-18px)}}
+  @keyframes driftB{from{transform:translate(0,0)}to{transform:translate(-30px,14px)}}
+  @media (prefers-reduced-motion:reduce){.net .drift-a,.net .drift-b{animation:none}}
+
+  header.site{position:relative;z-index:2}
+  .bar{display:flex;align-items:center;gap:14px;padding:22px 0;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+  .brand img{width:52px;height:52px;object-fit:contain}
+  .brand span{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.05rem;
+    letter-spacing:.01em;color:#fff;
+  }
+  nav.main{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+  nav.main a{
+    text-decoration:none;font-size:.95rem;font-weight:500;color:#CBD2E6;
+    padding:8px 12px;border-radius:999px;transition:color .15s,background .15s;
+  }
+  nav.main a:hover{color:#fff;background:rgba(255,255,255,.08)}
+  nav.main a.join{color:var(--indigo-deep);background:var(--amber);font-weight:600}
+  nav.main a.join:hover{background:var(--amber-soft)}
+
+  .hero-inner{position:relative;z-index:2;padding:72px 0 96px;max-width:640px}
+  .hero h1{font-size:clamp(2.3rem,5.4vw,3.6rem);margin-bottom:18px;color:#fff}
+  .hero p.lede{font-size:1.12rem;color:#C6CDE2;max-width:52ch;margin-bottom:14px}
+  .hero p.tagline{font-style:italic;color:var(--amber-soft);font-size:1rem;margin-bottom:34px}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap}
+  .btn{
+    display:inline-block;text-decoration:none;font-weight:600;font-size:.98rem;
+    padding:13px 24px;border-radius:999px;transition:transform .15s,background .15s;
+  }
+  .btn:active{transform:scale(.98)}
+  .btn.primary{background:var(--amber);color:var(--indigo-deep)}
+  .btn.primary:hover{background:var(--amber-soft)}
+  .btn.ghost{color:#fff;border:1.5px solid rgba(255,255,255,.4)}
+  .btn.ghost:hover{border-color:#fff}
+
+  /* ---------- sections ---------- */
+  section{padding:76px 0}
+  .kicker{color:var(--amber);font-weight:600;font-size:1rem;margin-bottom:10px}
+  h2{font-size:clamp(1.7rem,3.4vw,2.3rem);margin-bottom:14px}
+  .section-intro{max-width:62ch;color:var(--ink-soft);margin-bottom:40px}
+  .section-intro a{color:var(--ink)}
+
+  /* research lines: graph-node list */
+  .lines{list-style:none;position:relative;max-width:720px}
+  .lines li{position:relative;padding:0 0 34px 44px}
+  .lines li:last-child{padding-bottom:0}
+  .lines li::before{ /* node */
+    content:"";position:absolute;left:6px;top:8px;width:14px;height:14px;border-radius:50%;
+    background:var(--amber);box-shadow:0 0 0 4px rgba(232,147,12,.18);
+  }
+  .lines li:not(:last-child)::after{ /* edge */
+    content:"";position:absolute;left:12px;top:28px;bottom:2px;width:2px;
+    background:linear-gradient(var(--edge),rgba(110,139,209,.25));
+  }
+  .lines h3{font-size:1.2rem;margin-bottom:4px}
+  .lines p{color:var(--ink-soft);max-width:56ch}
+  .lines li.more::before{ /* open node: the network keeps growing */
+    background:transparent;border:2px dashed var(--amber);
+    width:12px;height:12px;box-shadow:none;
+  }
+  .lines li.more p{font-style:italic}
+
+  /* publications grid */
+  .pubs{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .pub{
+    text-decoration:none;background:#fff;border:1px solid var(--line);
+    border-radius:var(--radius);overflow:hidden;
+    transition:transform .18s,box-shadow .18s;
+  }
+  .pub:hover{transform:translateY(-4px);box-shadow:0 14px 30px -16px rgba(20,32,74,.35)}
+  .pub img{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center top}
+  .pub .cap{padding:14px 16px 16px}
+  .pub .cap strong{display:block;font-size:.98rem;line-height:1.4;margin-bottom:4px}
+  .pub .cap em{font-style:normal;color:var(--amber);font-size:.88rem;font-weight:600}
+  .more-link{display:inline-block;margin-top:34px;font-weight:600;color:var(--ink)}
+  .publist{list-style:none;max-width:880px;border-top:1px solid var(--line);margin-top:18px}
+  .publist li{display:flex;gap:22px;padding:13px 0;border-bottom:1px solid var(--line)}
+  .publist time{flex:0 0 54px;color:var(--amber);font-weight:600;font-size:.92rem;padding-top:2px}
+  .publist p{font-size:.95rem}
+  .publist p a{color:var(--ink)}
+  .publist span{color:var(--ink-soft)}
+  .worklist-head{font-size:1.25rem;margin-top:56px}
+
+  /* news */
+  .news{list-style:none;max-width:760px;border-top:1px solid var(--line)}
+  .news li{display:flex;gap:22px;padding:16px 0;border-bottom:1px solid var(--line)}
+  .news time{flex:0 0 84px;color:var(--amber);font-weight:600;font-size:.92rem;padding-top:2px}
+  .news p{color:var(--ink)}
+  .news a{color:var(--ink)}
+  .news-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:52px;align-items:center}
+  .newsgif{border-radius:16px;overflow:hidden;background:#fff;border:1px solid var(--line)}
+  .newsgif img,.newsgif video{width:100%;display:block}
+  .newsgif figcaption{padding:10px 16px;font-size:.85rem;color:var(--ink-soft)}
+
+  /* research: text + rotating brain video */
+  .research-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+  figure.brainvid{
+    border-radius:16px;overflow:hidden;background:var(--indigo-deep);
+    box-shadow:0 26px 54px -30px rgba(20,32,74,.55);
+  }
+  .brainvid iframe{display:block;width:100%;aspect-ratio:16/10;border:0}
+  .brainvid video{display:block;width:100%}
+  .fp-anim{display:block;width:100%;border-radius:12px;box-shadow:0 16px 34px -22px rgba(20,32,74,.5)}
+  .brainvid figcaption{
+    padding:10px 16px;font-size:.85rem;color:#AEB6CE;background:var(--indigo-deep);
+  }
+
+  .brainvid .video-ph{
+    aspect-ratio:16/10;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:12px;color:#AEB6CE;font-size:.95rem;text-align:center;padding:20px;
+    background:radial-gradient(circle at 50% 42%,#26315C,var(--indigo-deep));
+  }
+  .video-ph .play{
+    width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.12);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .video-ph .play::after{
+    content:"";border-style:solid;border-width:11px 0 11px 18px;
+    border-color:transparent transparent transparent #fff;margin-left:5px;
+  }
+  .pub .thumb{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
+  .pub .thumb svg{width:66px;height:66px;opacity:.85}
+
+  /* people grid */
+  .people-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:34px 26px;max-width:980px}
+  .person{text-align:center}
+  .person img{
+    width:124px;height:124px;border-radius:50%;object-fit:cover;margin:0 auto 12px;
+    border:3px solid #fff;box-shadow:0 10px 24px -12px rgba(20,32,74,.45);
+  }
+  .person strong{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:1.02rem;line-height:1.3}
+  .person span{display:block;color:var(--ink-soft);font-size:.88rem;margin-top:3px}
+
+  /* alumni + collaborators */
+  .team-extra{display:grid;grid-template-columns:1fr 1.5fr;gap:48px;margin-top:56px;padding-top:44px;border-top:1px solid var(--line)}
+  .team-extra h3{font-size:1.15rem;margin-bottom:16px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{
+    font-size:.85rem;background:#fff;border:1px solid var(--line);
+    border-radius:999px;padding:5px 13px;color:var(--ink-soft);
+  }
+  ul.collab{list-style:none;columns:2;column-gap:30px;font-size:.9rem}
+  ul.collab li{margin-bottom:8px;break-inside:avoid;color:var(--ink-soft)}
+  ul.collab li strong{font-weight:600;color:var(--ink)}
+
+  /* where we are: crossfading campus / lab photos */
+  .place{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:21/9;min-height:260px}
+  .place .slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
+  .place a.slide img{width:100%;height:100%;object-fit:cover}
+  .place .slide.a{animation:xfade 16s infinite}
+  .place .slide.b{animation:xfade 16s infinite;animation-delay:-8s}
+  @keyframes xfade{0%,40%{opacity:1}50%,90%{opacity:0}100%{opacity:1}}
+  @media (prefers-reduced-motion:reduce){
+    .place .slide{animation:none}
+    .place .slide.a{opacity:1}
+  }
+  .place .placeholder{
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    background:linear-gradient(150deg,#26315C,var(--indigo-deep));color:#AEB6CE;
+    font-family:'Bricolage Grotesque',sans-serif;font-size:1.15rem;padding:20px;
+  }
+  .place-cap{margin-top:12px;font-size:.9rem;color:var(--ink-soft)}
+
+  /* join band */
+  .band{
+    background:linear-gradient(140deg,var(--indigo),var(--indigo-deep));
+    color:#EDF0F8;border-radius:16px;padding:52px 48px;
+    display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;
+  }
+  .band h2{color:#fff;margin-bottom:8px}
+  .band p{color:#C6CDE2;max-width:52ch}
+
+  /* footer */
+  footer{background:var(--indigo-deep);color:#AEB6CE;padding:56px 0 40px;margin-top:40px}
+  .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;margin-bottom:40px}
+  footer h3{color:#fff;font-size:1rem;margin-bottom:12px}
+  footer ul{list-style:none}
+  footer li{margin-bottom:8px}
+  footer a{color:#AEB6CE;text-decoration:none}
+  footer a:hover{color:#fff}
+  .credits{border-top:1px solid rgba(255,255,255,.12);padding-top:22px;font-size:.88rem;color:#7E88A6}
+  .credits em{color:#AEB6CE}
+
+  @media (max-width:860px){
+    .research-grid{grid-template-columns:1fr;gap:36px}
+    .news-grid{grid-template-columns:1fr;gap:32px}
+    .team-extra{grid-template-columns:1fr;gap:36px}
+    ul.collab{columns:1}
+    .pubs{grid-template-columns:repeat(2,1fr)}
+    .people-grid{grid-template-columns:repeat(2,1fr)}
+    .foot-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:560px){
+    .pubs{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr}
+    .news li{flex-direction:column;gap:2px}
+    .band{padding:36px 26px}
+    section{padding:56px 0}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <!-- drifting connectome background -->
+  <svg class="net" viewBox="0 0 1200 620" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g class="drift-a" stroke="#6E8BD1" stroke-opacity=".28" stroke-width="1.2" fill="none">
+      <path d="M950 90 L1080 170 L1010 300 L870 250 Z"/>
+      <path d="M1080 170 L1160 90 M1010 300 L1130 380 M870 250 L760 340 L640 270 M760 340 L820 470"/>
+      <path d="M640 270 L520 200 L400 290"/>
+    </g>
+    <g class="drift-b" stroke="#6E8BD1" stroke-opacity=".18" stroke-width="1" fill="none">
+      <path d="M120 480 L240 400 L360 470 L300 570 M240 400 L200 300 L80 340 M360 470 L500 520"/>
+    </g>
+    <g class="drift-a" fill="#E8930C">
+      <circle cx="950" cy="90" r="5"/><circle cx="1080" cy="170" r="7"/>
+      <circle cx="1010" cy="300" r="5"/><circle cx="870" cy="250" r="6"/>
+      <circle cx="760" cy="340" r="4.5"/><circle cx="640" cy="270" r="6"/>
+      <circle cx="1130" cy="380" r="4"/><circle cx="820" cy="470" r="4"/>
+      <circle cx="520" cy="200" r="4.5"/><circle cx="1160" cy="90" r="3.5"/>
+      <circle cx="400" cy="290" r="3.5"/>
+    </g>
+    <g class="drift-b" fill="#F5B94F" fill-opacity=".85">
+      <circle cx="120" cy="480" r="5"/><circle cx="240" cy="400" r="6"/>
+      <circle cx="360" cy="470" r="5"/><circle cx="200" cy="300" r="4"/>
+      <circle cx="300" cy="570" r="4"/><circle cx="80" cy="340" r="3.5"/>
+      <circle cx="500" cy="520" r="4"/>
+    </g>
+  </svg>
+
+  <header class="site">
+    <div class="wrap bar">
+      <a class="brand" href="#">
+        <img src="assets/logo_small.png" alt="AMICO Lab logo">
+        <span>[Advanced Models In COnnectomics]</span>
+      </a>
+      <nav class="main" aria-label="Main">
+        <a href="#">Home</a>
+        <a href="#research">Research</a>
+        <a href="#people">People</a>
+        <a href="#work">Publications</a>
+        <a href="#news">News</a>
+        <a class="join" href="#join">Join us</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="wrap hero-inner">
+    <h1>Mapping the networks of the human brain</h1>
+    <p class="lede">The AMICO Lab develops network science and connectomics methods to understand how brain connectivity shapes cognition, behaviour and disease.</p>
+    <p class="tagline">…not a mainstream lab</p>
+    <div class="cta-row">
+      <a class="btn primary" href="#join">Join the lab</a>
+      <a class="btn ghost" href="#work">See our science</a>
+      <a class="btn ghost" href="https://github.com/eamico">Lab GitHub</a>
+    </div>
+  </div>
+</div>
+
+<section id="research">
+  <div class="wrap">
+    <p class="kicker">Research</p>
+    <h2>What we work on</h2>
+    <p class="section-intro">Brain connectomics models the brain as a network: structural connections from diffusion MRI, functional connections from fMRI and MEG. We build the mathematics to read these networks — and ask what they reveal about individuals.</p>
+    <div class="research-grid">
+    <ul class="lines">
+      <li>
+        <h3>Brain fingerprinting</h3>
+        <p>What makes each connectome unique — identifying individuals from their functional connectivity across tasks, modalities and states of consciousness.</p>
+      </li>
+      <li>
+        <h3>Higher-order brain networks</h3>
+        <p>Beyond pairwise connections: topological and simplicial signatures of brain function, and what they add to task decoding and behaviour.</p>
+      </li>
+      <li>
+        <h3>Clinical and altered-state connectomics</h3>
+        <p>Applying network models to stroke, Alzheimer's, Parkinson's disease, anaesthesia and psychedelics.</p>
+      </li>
+      <li class="more">
+        <p>…and these are just the main threads. Sleep, attention, brain communication, new mathematics for connectomes — the network keeps growing. <a href="#work">See our publications</a> for the full picture.</p>
+      </li>
+    </ul>
+    <figure class="brainvid">
+      <iframe src="https://video.wordpress.com/embed/BDZZh6xw?cover=1&amp;preloadContent=metadata&amp;useAverageColor=1&amp;hd=1" title="Rotating connectome video" allowfullscreen allow="clipboard-write"></iframe>
+      <figcaption>Brain fingerprinting in action — video by Andrea Santoro</figcaption>
+    </figure>
+    </div>
+  </div>
+</section>
+
+<section id="explainer" style="padding-top:0">
+  <div class="wrap">
+    <p class="kicker">Explainer</p>
+    <h2>Brain fingerprinting 101</h2>
+    <div class="research-grid">
+      <div>
+        <p class="section-intro" style="margin-bottom:18px">No two brains are wired alike. Just as your fingertip identifies you, your functional connectome — the pattern of connections between your brain's regions — is unique enough to pick you out of a crowd. This idea, brain fingerprinting, runs through much of our work: from what makes a connectome identifiable, to how disease, anaesthesia and psychedelics reshape it. Enrico explains it all in four minutes.</p>
+        <video class="fp-anim" src="assets/fingerprint_animation.mp4" autoplay muted loop playsinline aria-label="Animated brain fingerprinting schematic"></video>
+      </div>
+      <figure class="brainvid">
+        <video controls preload="none" poster="assets/fingerprinting101_poster.jpg" src="assets/fingerprinting101_web.mp4"></video>
+        <figcaption>Brain fingerprinting, explained — produced at EPFL</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="work" style="padding-top:0">
+  <div class="wrap">
+    <p class="kicker">Selected work</p>
+    <h2>Our science, at a glance</h2>
+    <p class="section-intro">A few representative papers — click any figure to read the full article.</p>
+    <div class="pubs">
+      <a class="pub" href="https://www.nature.com/articles/s44220-026-00657-x">
+        <img src="assets/fig_natmh.jpg" alt="Figure: patient-specific functional networks in Parkinson's disease" loading="lazy">
+        <div class="cap"><strong>Patient-specific networks track early changes in Parkinson's</strong><em>Nature Mental Health · 2026</em></div>
+      </a>
+      <a class="pub" href="https://www.nature.com/articles/s41562-025-02121-9">
+        <img src="assets/fig_nathb.jpg" alt="Figure: anaesthesia and the uniqueness of brain connectivity across individuals and species" loading="lazy">
+        <div class="cap"><strong>Anaesthesia decreases the uniqueness of brain connectivity</strong><em>Nature Human Behaviour · 2025</em></div>
+      </a>
+      <a class="pub" href="https://www.nature.com/articles/s41467-024-54472-y">
+        <img src="assets/fig_natcomms24.jpg" alt="Figure: higher-order connectomics of human brain function" loading="lazy">
+        <div class="cap"><strong>Higher-order connectomics of human brain function</strong><em>Nature Communications · 2024</em></div>
+      </a>
+      <a class="pub" href="https://www.nature.com/articles/s41567-022-01852-0">
+        <img src="assets/fig_natphys.jpg" alt="Figure: higher-order organization of multivariate time series" loading="lazy">
+        <div class="cap"><strong>Higher-order organization of multivariate time series</strong><em>Nature Physics · 2023</em></div>
+      </a>
+      <a class="pub" href="https://www.science.org/doi/10.1126/sciadv.abj0751">
+        <img src="assets/fig_sciadv.jpg" alt="Figure: dynamic identification of brain fingerprints across temporal scales" loading="lazy">
+        <div class="cap"><strong>The temporality of the human brain fingerprint</strong><em>Science Advances · 2021</em></div>
+      </a>
+      <a class="pub" href="https://www.nature.com/articles/s41467-023-43971-z">
+        <img src="assets/fig_natcomms.jpg" alt="Figure: communication dynamics in the human connectome" loading="lazy">
+        <div class="cap"><strong>Parallel information transmission in brain networks</strong><em>Nature Communications · 2023</em></div>
+      </a>
+    </div>
+    <h3 class="worklist-head">Recent publications</h3>
+    <ul class="publist">
+      <li><time>2026</time><p><a href="https://link.springer.com/article/10.1007/s10548-026-01216-4">Appropriate null models for testing the effect of the head model on MEG functional connectivity fingerprinting.</a> <span>M. Schelfhout et al. — Brain Topography</span></p></li>
+      <li><time>2026</time><p><a href="https://www.biorxiv.org/content/10.1101/2026.06.07.730661">The blueprint of human functional architecture shifts from cognition to anatomy during perturbations of consciousness.</a> <span>A. I. Luppi et al. — bioRxiv (preprint)</span></p></li>
+      <li><time>2026</time><p><a href="https://www.nature.com/articles/s44220-026-00657-x">Patient-specific functional networks track early cognitive alterations and minor hallucinations in Parkinson's disease.</a> <span>S. Stampacchia et al. — Nature Mental Health</span></p></li>
+      <li><time>2026</time><p><a href="https://www.researchsquare.com/article/rs-8475840/v1">Brain connectivity fingerprinting as a predictive biomarker of art therapy outcomes in Parkinson's disease.</a> <span>A. Ielo et al. — Research Square (preprint)</span></p></li>
+      <li><time>2026</time><p><a href="https://www.biorxiv.org/content/10.1101/2026.07.24.740595">Neural manifold connectomics reveals multiregime functional connectivity.</a> <span>P. Velidi et al. — bioRxiv (preprint)</span></p></li>
+    </ul>
+    <a class="more-link" href="https://scholar.google.com/citations?user=Nfs7414AAAAJ&amp;hl=en">Full publication record on Google Scholar</a>
+    <a class="more-link" href="https://github.com/eamico" style="margin-left:26px">Lab GitHub</a>
+  </div>
+</section>
+
+<section id="news" style="padding-top:0">
+  <div class="wrap">
+    <p class="kicker">News</p>
+    <h2>Recent from the lab</h2>
+    <div class="news-grid">
+    <ul class="news" style="margin-top:28px">
+      <li><time>Jul 2026</time><p>Enrico to speak at <a href="https://aimsconference.org/conferences/2026/index.html">AIMS 2026</a>; Emily, Sandra and Kaiyi to present posters at <a href="https://www.humanbrainmapping.org/OHBM2026/">OHBM 2026</a>.</p></li>
+      <li><time>Jan 2026</time><p>New in <a href="https://www.nature.com/articles/s44220-026-00657-x">Nature Mental Health</a>: patient-specific functional networks track early cognitive alterations in Parkinson's disease. Congrats to Sara Stampacchia!</p></li>
+      <li><time>Dec 2025</time><p>Gwen Harrington passes her viva — "Dynamics, Networks, and Dynamics on Networks". Ad maiora, Gwen!</p></li>
+      <li><time>Nov 2025</time><p>Our signal-processing perspective on brain fingerprinting is out in <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=11263963">IEEE</a>.</p></li>
+    </ul>
+    <figure class="newsgif">
+      <video autoplay muted loop playsinline aria-label="Rotating structural connectome"><source src="assets/connectome.webm" type="video/webm"><source src="assets/connectome.mp4" type="video/mp4"></video>
+      <figcaption>The connectome, always in motion</figcaption>
+    </figure>
+    </div>
+  </div>
+</section>
+
+<section id="people" style="padding-top:0">
+  <div class="wrap">
+    <p class="kicker">People</p>
+    <h2>The team</h2>
+    <div class="people-grid" style="margin-top:34px">
+      <div class="person"><img src="assets/people/enrico.jpg" alt="Enrico Amico"><strong>Enrico Amico</strong><span>Principal Investigator</span></div>
+      <div class="person"><img src="assets/people/rachael.jpg" alt="Rachael Stickland"><strong>Rachael Stickland, PhD</strong><span>Senior Research Data Scientist</span></div>
+      <div class="person"><img src="assets/people/gwen.jpg" alt="Gwen Harrington"><strong>Gwen Harrington</strong><span>PhD student</span></div>
+      <div class="person"><img src="assets/people/sandra.jpg" alt="Sandra Rodriguez"><strong>Sandra Rodriguez</strong><span>PhD student</span></div>
+      <div class="person"><img src="assets/people/peter.jpg" alt="Peter Kissack"><strong>Peter Kissack</strong><span>PhD student</span></div>
+      <div class="person"><img src="assets/people/emily.jpg" alt="Emily Wilson"><strong>Emily Wilson</strong><span>PhD student</span></div>
+      <div class="person"><img src="assets/people/kaiyi.jpg" alt="Kaiyi Yang"><strong>Kaiyi Yang</strong><span>PhD student</span></div>
+      <div class="person"><img src="assets/people/ravneet.jpg" alt="Ravneet Virdee"><strong>Ravneet Virdee</strong><span>Trainee Clinical Scientist</span></div>
+    </div>
+    <div class="team-extra">
+      <div>
+        <h3>Alumni</h3>
+        <div class="chips">
+          <span class="chip">Andrea Santoro</span>
+          <span class="chip">Krishna Bhavaraju</span>
+          <span class="chip">Alessandro Lucatelli</span>
+          <span class="chip">Flavia Petruso</span>
+          <span class="chip">Hanna Tolle</span>
+          <span class="chip">Alessandra Griffa</span>
+          <span class="chip">Ekansh Sareen</span>
+          <span class="chip">Mathieu Mach</span>
+          <span class="chip">Juan Carlos Farah</span>
+          <span class="chip">Emahnuel Troisi Lopez</span>
+          <span class="chip">Pablo Mallaroni</span>
+          <span class="chip">Sélima Zahar</span>
+          <span class="chip">Nikolina Bunjevac</span>
+        </div>
+      </div>
+      <div>
+        <h3>Collaborators</h3>
+        <ul class="collab">
+          <li><strong>Joaquín Goñi</strong>, Purdue University</li>
+          <li><strong>Daniele Marinazzo</strong>, Ghent University</li>
+          <li><strong>Giovanni Petri</strong>, NU London</li>
+          <li><strong>Federico Battiston</strong>, Central European University</li>
+          <li><strong>Dante Mantini</strong>, KU Leuven</li>
+          <li><strong>Dimitri Van De Ville</strong>, EPFL</li>
+          <li><strong>Kepa Paz-Alonso</strong>, BCBL</li>
+          <li><strong>Olaf Sporns</strong>, Indiana University</li>
+          <li><strong>David Kareken</strong>, Indiana University</li>
+          <li><strong>Alex Arenas</strong>, Universitat Rovira i Virgili</li>
+          <li><strong>Jan Ramaekers</strong>, Maastricht University</li>
+          <li><strong>Sara Stampacchia</strong>, EPFL</li>
+          <li><strong>Pierpaolo Sorrentino</strong>, Aix-Marseille University</li>
+          <li><strong>Daniel Whitcomb</strong>, University of Bristol</li>
+          <li><strong>Andrea Luppi</strong>, Oxford University</li>
+          <li><strong>Bratislav Misic</strong>, McGill University</li>
+          <li><strong>Daniel Shaw</strong>, Aston University</li>
+          <li><strong>Alberto Cacciola</strong>, Humanitas University</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="where" style="padding-top:0">
+  <div class="wrap">
+    <p class="kicker">Where we are</p>
+    <h2>University of Birmingham</h2>
+    <div class="place" style="margin-top:28px">
+      <img class="slide a" src="assets/campus.jpg" alt="University of Birmingham campus">
+      <a class="slide b" href="https://www.birmingham.ac.uk/research/centres-institutes/human-brain-health" aria-label="Centre for Human Brain Health website"><img src="assets/chbh.jpg" alt="Centre for Human Brain Health, University of Birmingham"></a>
+    </div>
+    <p class="place-cap">School of Mathematics &amp; <a href="https://www.birmingham.ac.uk/research/centres-institutes/human-brain-health">Centre for Human Brain Health</a>, University of Birmingham, UK</p>
+  </div>
+</section>
+
+<section id="join" style="padding-top:0">
+  <div class="wrap">
+    <div class="band">
+      <div>
+        <h2>We're recruiting</h2>
+        <p>PhD studentships are available for 2027, and we're always looking for enthusiastic students and postdocs interested in brain networks.</p>
+      </div>
+      <a class="btn primary" href="mailto:e.amico@bham.ac.uk">Get in touch</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h3>AMICO Lab</h3>
+        <p>School of Mathematics &amp; CHBH<br>University of Birmingham<br>e.amico [at] bham.ac.uk</p>
+      </div>
+      <div>
+        <h3>Explore</h3>
+        <ul>
+          <li><a href="#people">People</a></li>
+          <li><a href="#work">Publications</a></li>
+          <li><a href="#join">Join us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Follow</h3>
+        <ul>
+          <li><a href="https://twitter.com/enri_amico">Twitter / X</a></li>
+          <li><a href="https://scholar.google.com/citations?user=Nfs7414AAAAJ&amp;hl=en">Google Scholar</a></li>
+          <li><a href="https://github.com/eamico">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="credits">
+      <img src="assets/logo_small.png" alt="AMICO Lab logo" style="width:110px;height:auto;margin-bottom:14px">
+      <br>Proudly powered by <em>Sharkademia™</em> · Logo by Shrecki The Biscuit · Visual editing by Elisewin87
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
