@@ -40,17 +40,14 @@
     position:relative;overflow:hidden;color:#F3F4F8;
     background:linear-gradient(160deg,var(--indigo) 0%,var(--indigo-deep) 78%);
   }
-  .hero svg.net{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-  .net .drift-a{animation:driftA 46s ease-in-out infinite alternate}
-  .net .drift-b{animation:driftB 58s ease-in-out infinite alternate}
-  @keyframes driftA{from{transform:translate(0,0)}to{transform:translate(26px,-18px)}}
-  @keyframes driftB{from{transform:translate(0,0)}to{transform:translate(-30px,14px)}}
-  @media (prefers-reduced-motion:reduce){.net .drift-a,.net .drift-b{animation:none}}
+  .hero canvas.net{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 
   header.site{position:relative;z-index:2}
   .bar{display:flex;align-items:center;gap:14px;padding:22px 0;flex-wrap:wrap}
   .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
   .brand img{width:90px;height:90px;object-fit:contain}
+  .brand .brand-text{display:flex;flex-direction:column;gap:1px}
+  .brand-tag{font-style:italic;color:var(--amber-soft);font-size:.88rem}
   .brand span{
     font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.18rem;
     letter-spacing:.01em;color:#fff;
@@ -249,36 +246,16 @@
 
 <div class="hero">
   <!-- drifting connectome background -->
-  <svg class="net" viewBox="0 0 1200 620" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <g class="drift-a" stroke="#6E8BD1" stroke-opacity=".28" stroke-width="1.2" fill="none">
-      <path d="M950 90 L1080 170 L1010 300 L870 250 Z"/>
-      <path d="M1080 170 L1160 90 M1010 300 L1130 380 M870 250 L760 340 L640 270 M760 340 L820 470"/>
-      <path d="M640 270 L520 200 L400 290"/>
-    </g>
-    <g class="drift-b" stroke="#6E8BD1" stroke-opacity=".18" stroke-width="1" fill="none">
-      <path d="M120 480 L240 400 L360 470 L300 570 M240 400 L200 300 L80 340 M360 470 L500 520"/>
-    </g>
-    <g class="drift-a" fill="#E8930C">
-      <circle cx="950" cy="90" r="5"/><circle cx="1080" cy="170" r="7"/>
-      <circle cx="1010" cy="300" r="5"/><circle cx="870" cy="250" r="6"/>
-      <circle cx="760" cy="340" r="4.5"/><circle cx="640" cy="270" r="6"/>
-      <circle cx="1130" cy="380" r="4"/><circle cx="820" cy="470" r="4"/>
-      <circle cx="520" cy="200" r="4.5"/><circle cx="1160" cy="90" r="3.5"/>
-      <circle cx="400" cy="290" r="3.5"/>
-    </g>
-    <g class="drift-b" fill="#F5B94F" fill-opacity=".85">
-      <circle cx="120" cy="480" r="5"/><circle cx="240" cy="400" r="6"/>
-      <circle cx="360" cy="470" r="5"/><circle cx="200" cy="300" r="4"/>
-      <circle cx="300" cy="570" r="4"/><circle cx="80" cy="340" r="3.5"/>
-      <circle cx="500" cy="520" r="4"/>
-    </g>
-  </svg>
+  <canvas class="net" aria-hidden="true"></canvas>
 
   <header class="site">
     <div class="wrap bar">
       <a class="brand" href="#">
         <img src="assets/logo_small.png" alt="AMICO Lab logo">
-        <span>[Advanced Models In COnnectomics]</span>
+        <div class="brand-text">
+          <span>[Advanced Models In COnnectomics]</span>
+          <em class="brand-tag">…not a mainstream lab</em>
+        </div>
       </a>
       <nav class="main" aria-label="Main">
         <a href="#">Home</a>
@@ -294,7 +271,6 @@
   <div class="wrap hero-inner">
     <h1>Mapping the networks of the human brain</h1>
     <p class="lede">The AMICO Lab develops network science and connectomics methods to understand how brain connectivity shapes cognition, behaviour and disease.</p>
-    <p class="tagline">…not a mainstream lab</p>
     <div class="cta-row">
       <a class="btn primary" href="#join">Join the lab</a>
       <a class="btn ghost" href="#work">See our science</a>
@@ -528,5 +504,132 @@
   </div>
 </footer>
 
+<script>
+(function(){
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hero = document.querySelector('.hero');
+  const canvas = hero.querySelector('canvas.net');
+  const ctx = canvas.getContext('2d');
+  const rand = (a,b)=>a+Math.random()*(b-a);
+  let W, H, net, drift;
+  const pulses = [], flashes = [], last = {};
+  const SPEED = 260;
+
+  function build(){
+    const nodes = [], edges = [];
+    const centers = [[.14,.30],[.34,.72],[.52,.22],[.72,.60],[.90,.25],[.63,.88]];
+    centers.forEach((c,ci)=>{
+      const n = 7+Math.floor(Math.random()*3);
+      for(let i=0;i<n;i++){
+        const a = Math.random()*Math.PI*2, d = Math.pow(Math.random(),.6)*Math.min(W,H)*.11;
+        nodes.push({x:c[0]*W+Math.cos(a)*d, y:c[1]*H+Math.sin(a)*d*1.15, r:i===0?6:rand(2.2,4.6), hub:i===0});
+      }
+    });
+    nodes.forEach((n,i)=>{
+      const by = nodes.map((m,j)=>({j, d:Math.hypot(n.x-m.x,n.y-m.y)}))
+                      .filter(o=>o.j!==i).sort((a,b)=>a.d-b.d);
+      for(let t=0;t<2;t++){
+        const j = by[t].j, a = Math.min(i,j), b = Math.max(i,j);
+        if(!edges.some(e=>e.a===a&&e.b===b)) edges.push({a,b});
+      }
+    });
+    const hubs = nodes.map((n,i)=>n.hub?i:-1).filter(i=>i>=0);
+    for(let h=0;h<hubs.length;h++){
+      const h2 = (h+1)%hubs.length;
+      edges.push({a:Math.min(hubs[h],hubs[h2]), b:Math.max(hubs[h],hubs[h2])});
+    }
+    const adj = nodes.map(()=>[]);
+    edges.forEach((e,ei)=>{ adj[e.a].push({n:e.b,e:ei}); adj[e.b].push({n:e.a,e:ei}); });
+    return {nodes, edges, adj};
+  }
+
+  function resize(){
+    W = hero.clientWidth; H = hero.clientHeight;
+    canvas.width = W*devicePixelRatio; canvas.height = H*devicePixelRatio;
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    net = build();
+    drift = net.nodes.map(()=>({p:Math.random()*Math.PI*2, s:rand(.2,.7), ax:rand(4,11), ay:rand(3,8)}));
+  }
+
+  function firing(i, gen, now, amp){
+    flashes.push({node:i, t0:now, amp});
+    if(gen<=0) return;
+    net.adj[i].forEach(({n,e})=>{
+      if(last['e'+e] && now-last['e'+e] < 350) return;
+      last['e'+e] = now;
+      const A = net.nodes[i], B = net.nodes[n];
+      pulses.push({from:i, to:n, t0:now, dur:Math.hypot(A.x-B.x,A.y-B.y)/SPEED*1000, gen:gen-1, amp});
+    });
+  }
+
+  let mouse = null;
+  hero.addEventListener('pointermove', ev=>{
+    const r = hero.getBoundingClientRect();
+    mouse = {x:ev.clientX-r.left, y:ev.clientY-r.top};
+  });
+  hero.addEventListener('pointerleave', ()=>mouse=null);
+
+  function frame(now){
+    ctx.clearRect(0,0,W,H);
+    const t = now/1000;
+    const pos = net.nodes.map((n,i)=>{
+      if(reduced) return {x:n.x, y:n.y};
+      const d = drift[i];
+      return {x:n.x+Math.cos(d.p+t*d.s)*d.ax, y:n.y+Math.sin(d.p+t*d.s*0.8)*d.ay};
+    });
+    if(mouse){
+      for(let i=0;i<pos.length;i++){
+        if(Math.hypot(mouse.x-pos[i].x, mouse.y-pos[i].y) < net.nodes[i].r+11){
+          if(!last['n'+i] || now-last['n'+i] > 700){
+            last['n'+i] = now;
+            firing(i, 3, now, 1);
+          }
+          break;
+        }
+      }
+    }
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(110,139,209,0.22)';
+    net.edges.forEach(e=>{
+      ctx.beginPath(); ctx.moveTo(pos[e.a].x,pos[e.a].y); ctx.lineTo(pos[e.b].x,pos[e.b].y); ctx.stroke();
+    });
+    for(let i=pulses.length-1;i>=0;i--){
+      const p = pulses[i], k2 = (now-p.t0)/p.dur;
+      if(k2>=1){ pulses.splice(i,1); firing(p.to, p.gen, now, p.amp*0.72); continue; }
+      const A = pos[p.from], B = pos[p.to];
+      const x = A.x+(B.x-A.x)*k2, y = A.y+(B.y-A.y)*k2;
+      const k1 = Math.max(0,k2-0.22);
+      const x1 = A.x+(B.x-A.x)*k1, y1 = A.y+(B.y-A.y)*k1;
+      const g = ctx.createLinearGradient(x1,y1,x,y);
+      g.addColorStop(0,'rgba(245,185,79,0)');
+      g.addColorStop(1,'rgba(245,185,79,'+(0.85*p.amp)+')');
+      ctx.strokeStyle = g; ctx.lineWidth = 2.2;
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x,y); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,224,150,'+(0.95*p.amp)+')';
+      ctx.beginPath(); ctx.arc(x,y,2.6,0,7); ctx.fill();
+    }
+    const flashAmp = net.nodes.map(()=>0);
+    for(let i=flashes.length-1;i>=0;i--){
+      const f = flashes[i], age = (now-f.t0)/600;
+      if(age>=1){ flashes.splice(i,1); continue; }
+      flashAmp[f.node] = Math.max(flashAmp[f.node], (1-age)*f.amp);
+    }
+    net.nodes.forEach((n,i)=>{
+      const fa = flashAmp[i];
+      const base = i%3===0 ? '232,147,12' : '245,185,79';
+      if(fa>0){
+        ctx.fillStyle = 'rgba(255,230,160,'+(0.28*fa)+')';
+        ctx.beginPath(); ctx.arc(pos[i].x,pos[i].y,n.r+10*fa,0,7); ctx.fill();
+      }
+      ctx.fillStyle = 'rgba('+base+','+(0.75+0.25*fa)+')';
+      ctx.beginPath(); ctx.arc(pos[i].x,pos[i].y,n.r+1.5*fa,0,7); ctx.fill();
+    });
+    requestAnimationFrame(frame);
+  }
+  resize();
+  addEventListener('resize', resize);
+  requestAnimationFrame(frame);
+})();
+</script>
 </body>
 </html>
